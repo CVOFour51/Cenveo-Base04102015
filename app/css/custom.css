@@ -4,3 +4,21 @@ Theme name: My SPA Theme
 Version: 1.0
 Template: Howdy
 */
+
+.jumbotron h2 img {
+    max-height: 120px;
+}
+.product-image-large { 
+   border:1px solid #021a40;
+
+}
+.img-responsive { 
+   border:1px solid #021a40;
+}
+.customthumb { 
+   border:1px solid #021a40;
+}
+.btn-info:active, .btn-info.active, .open .dropdown-toggle.btn-info {background-color: #C81826;}
+
+.badge {color: #000000;}
+.inventory_disclaimer {color: #EF0909;}
