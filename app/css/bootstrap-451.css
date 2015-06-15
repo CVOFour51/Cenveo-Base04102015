@@ -2071,12 +2071,8 @@ fieldset[disabled] .btn-default.active {
   background-color: #ffffff;
   border-color: #cccccc;
 }
-.btn-default {
+.btn-default .badge {
   color: #ffffff;
-  background-color: #333333;
-}
-.badge {
-  color: #000000;
   background-color: #333333;
 }
 .btn-primary {
@@ -4391,7 +4387,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   padding: 3px 7px;
   font-size: 11px;
   font-weight: bold;
-  color: #000000;
+  color: #ffffff;
   line-height: 1;
   vertical-align: baseline;
   white-space: nowrap;
