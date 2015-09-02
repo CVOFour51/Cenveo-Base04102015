@@ -12,12 +12,12 @@ four51.app.directive('customphonefield2', function() {
                 if (n) $scope.phoneNumber2 = $scope.spec.Value;
             });
 
-            $scope.$watch('phoneNumber2', function(value){
+            $scope.$watch('phoneNumber', function(value){
                 if (value) {
                     $scope.spec.Value = value.substring(0, 3) + value.substring(3, 6) + value.substring(6, 10);
 				}
                 else if(value == ""){
-                    $scope.spec.Value = "";					
+                    $scope.spec.Value = "";
                 }
             });
         }]
