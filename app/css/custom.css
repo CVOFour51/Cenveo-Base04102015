@@ -18,7 +18,7 @@ Template: Howdy
 .customthumb { 
    border:1px solid #021a40;
 }
-.thumbnail { 
+.thumbnail img{ 
    border:1px solid #021a40;
 }
 .btn-info:active, .btn-info.active, .open .dropdown-toggle.btn-info {background-color: #C81826;}
