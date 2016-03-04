@@ -1,10 +1,10 @@
 four51.app.factory('OrderConfig', ['Address', function(Address) {
     var user, order;
     var setCostCenter = function() {
-        // set the cost center if the user only has 1 assigned to them and the order doesn't already have a cost center assigned
-        if (user.CostCenters.length == 1 && order.CostCenter == null) {
+        //set the cost center if the user only has 1 assigned to them and the order doesn't already have a cost center assigned
+        if (user.CostCenters.length == 1 && order.CostCenter === null) {
             order.CostCenter = user.CostCenters[0].Name;
-            // also need to set each individual lineitem because Order doesn't actually save the CostCenter
+            //also need to set each individual line item because Order doesn't actually save the CostCenter
             angular.forEach(order.LineItems, function(n) {
                 n.CostCenter = user.CostCenters[0].Name;
             });
@@ -12,9 +12,9 @@ four51.app.factory('OrderConfig', ['Address', function(Address) {
     };
 
     var setPaymentMethod = function(accounts) {
-        // logic is that we want to default the payment method to the most likely choice of the user.
-        // this order is purely a business requirement. not an api requirement.
-	    if ((user.Permissions.contains('SubmitForApproval') && order.Approvals.length > 0) || (order.Total == 0 && !user.Company.BillZeroPriceOrders)) {
+        //logic is that we want to default the payment method to the most likely choice of the user.
+        //this order is purely a business requirement. not an api requirement.
+	    if ((user.Permissions.contains('SubmitForApproval') && order.Approvals.length > 0) || (order.Total === 0 && !user.Company.BillZeroPriceOrders)) {
 		    order.PaymentMethod = 'Undetermined'; return;
 	    }
 	    if (user.Permissions.contains('PayByBudgetAccount') && accounts.length > 0) {
@@ -26,10 +26,10 @@ four51.app.factory('OrderConfig', ['Address', function(Address) {
         if (user.Permissions.contains('PayByPO')) {
 	        order.PaymentMethod = 'PurchaseOrder'; return;
         }
-	    if (order.PaymentMethod == 'Undetermined' && order.Approvals.length == 0)
+	    if (order.PaymentMethod == 'Undetermined' && order.Approvals.length === 0)
 	        order.PaymentMethod = null;
 	    return null;
-    }
+    };
 
 	var setDefaultAddress = function() {
 		if (!order) return;
@@ -58,20 +58,21 @@ four51.app.factory('OrderConfig', ['Address', function(Address) {
 				});
 			}
 		});
-	}
+	};
 
 	var showOrderDetails = function() {
 		return (user.Permissions.contains('EditPOID') ||
 			user.Permissions.contains('Comments') ||
-			(user.Permissions.contains('CostCenterPerOrder') && !user.Permissions.contains('CostCenterPerLine')) ||
+			(user.Permissions.contains('CostCenterPerOrder') && !user.Permissions.contains('CostCenterPerLine') && user.CostCenters.length > 0) ||
+			(user.Permissions.contains('CostCenterPerOrder') && user.Permissions.contains('FreeFormCostCenter') ) ||
             (order && order.OrderFields.length > 0));
-	}
+	};
 
 	function _hasAddress() {
 		if (!order) return false;
-		if (order.ShipAddressID != null) return true;
+		if (order.ShipAddressID !== null) return true;
 		angular.forEach(order.LineItems, function(li) {
-			if (li.ShipAddressID != null) return true;
+			if (li.ShipAddressID !== null) return true;
 		});
 		return false;
 	}
@@ -79,7 +80,7 @@ four51.app.factory('OrderConfig', ['Address', function(Address) {
     return {
 	    address: function(o, u) {
 			order = o; user = u;
-		    // not supporting cost center default addreses due to issues with assignments to the user
+		    // not supporting cost center default addresses due to issues with assignments to the user
 		    if (!_hasAddress())
 			    setDefaultAddress();
 		    return this;
@@ -104,5 +105,3 @@ four51.app.factory('OrderConfig', ['Address', function(Address) {
 	    }
     };
 }]);
-
-

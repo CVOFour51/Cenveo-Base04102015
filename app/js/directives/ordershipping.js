@@ -6,12 +6,15 @@ four51.app.directive('ordershipping', ['Order', 'Shipper', 'Address', 'AddressLi
 			AddressList.clear();
 			AddressList.shipping(function(list) {
 				$scope.shipaddresses = list;
-                if (list.length == 1 && !$scope.currentOrder.ShipAddressID) {
-                    $scope.currentOrder.ShipAddressID = list[0].ID;
-                }
-				if ($scope.isEditforApproval) {
-					if (!AddressList.contains($scope.currentOrder.ShipAddress))
-						$scope.shipaddresses.push($scope.currentOrder.ShipAddress);
+
+				if ($scope.currentOrder) {
+					if (list.length == 1 && !$scope.currentOrder.ShipAddressID) {
+						$scope.currentOrder.ShipAddressID = list[0].ID;
+					}
+					if ($scope.isEditforApproval) {
+						if (!AddressList.contains($scope.currentOrder.ShipAddress))
+							$scope.shipaddresses.push($scope.currentOrder.ShipAddress);
+					}
 				}
 			});
 			$scope.shipaddress = { Country: 'US', IsShipping: true, IsBilling: false };
@@ -127,6 +130,24 @@ four51.app.directive('ordershipping', ['Order', 'Shipper', 'Address', 'AddressLi
 				}
 			});
 
+			$scope.$watch('currentOrder.LineItems[0].ShipFirstName', function(newValue) {
+				var shipFirstName = newValue;
+				if ($scope.currentOrder) {
+					angular.forEach($scope.currentOrder.LineItems, function(item) {
+						item.ShipFirstName = shipFirstName;
+					});
+				}
+			});
+
+			$scope.$watch('currentOrder.LineItems[0].ShipLastName', function(newValue) {
+				var shipLastName = newValue;
+				if ($scope.currentOrder) {
+					angular.forEach($scope.currentOrder.LineItems, function(item) {
+						item.ShipLastName = shipLastName;
+					});
+				}
+			});
+
 			$scope.setShipAddressAtLineItem = function(item) {
 				item.ShipFirstName = null;
 				item.ShipLastName = null;
@@ -197,8 +218,8 @@ four51.app.directive('ordershipping', ['Order', 'Shipper', 'Address', 'AddressLi
 						if (s.Name == li.ShipperName)
 							li.Shipper = s;
 					});
-					li.ShipperName = li.Shipper.Name;
-					li.ShipperID = li.Shipper.ID;
+					if (li.Shipper.Name) li.ShipperName = li.Shipper.Name;
+					if (li.Shipper.ID) li.ShipperID = li.Shipper.ID;
 					saveChanges(function() {
 						$scope.shippingUpdatingIndicator = false;
 						$scope.shippingFetchIndicator = false;

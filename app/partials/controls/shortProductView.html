@@ -31,7 +31,7 @@
                 <p ng-show="LineItem.Product.DisplayInventory && inventoryDisplay(LineItem.Product, LineItem.Variant) != undefined">
                     {{'Quantity Available' | r | xlat}}: {{inventoryDisplay(LineItem.Product, LineItem.Variant) }}
                 </p>
-            </section>
+            </section><productlistaddtocart></productlistaddtocart>
         </div>
     </div>
     <section class="hidden-lg hidden-md" ng-show="showSwipe" ng-swipe-right="showSwipe = false">

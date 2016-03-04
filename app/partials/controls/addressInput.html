@@ -1,10 +1,10 @@
 <div id="address_edit">
     <div class="view-form-icon" ng-hide="address.IsCustEditable == false">
-        <!--<div>
+        <div>
             <label for="Autocomplete">{{'Quick Address' | r | xlat}}</label>
             <input type="text" id="Autocomplete" class="form-control" details="addressobj" placeholder="{{'Enter a location' | r | xlat}}" ng-autocomplete ng-model="addressresult"/>
             <i class="fa fa-map-marker"></i>
-        </div>-->
+        </div>
     </div>
     <form name="addressEdit" ng-submit="save()">
         <div class="row">
@@ -63,8 +63,9 @@
                     <i class="fa fa-map-marker"></i>
                 </div>
                 <div>
-                    <label ng-class="{required: hasStates && address.IsCustEditable != false}">{{'Zip' | r | xlat}}</label>
-                    <input name="zip" class="form-control" type="text" ng-model="address.Zip" placeholder="{{'Zip' | r | xlat}}" autocomplete="off" ng-required="hasStates() && address.IsCustEditable == false" ng-disabled="address.IsCustEditable == false" />
+                    <label ng-class="{required: hasStates() && address.IsCustEditable != false}">{{'Zip' | r | xlat}}</label>
+                    <input name="zip" class="form-control" type="text" ng-model="address.Zip" placeholder="{{'Zip' | r | xlat}}" autocomplete="off" ng-required="hasStates() && address.IsCustEditable != false"
+                           ng-disabled="address.IsCustEditable == false" />
                     <i class="fa fa-map-marker"></i>
                 </div>
                 <div ng-class="{'view-form-select': !address.Country, '': address.Country }">
@@ -102,4 +103,5 @@
             </button>
         </div>
     </form>
+</div>
 </div>
