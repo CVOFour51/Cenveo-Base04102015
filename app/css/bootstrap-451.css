@@ -8231,6 +8231,10 @@ select.ng-invalid:invalid:invalid:focus {
 .file-upload-required:after {
   content: " Required";
 }
+.printable-pdf-link{
+  margin-top:10px;
+  margin-bottom:10px;
+}
 .static-spec-panel-body {
   padding-left: 0;
   padding-right: 0;
@@ -8653,6 +8657,20 @@ table[datepicker] {
 .credit-card-widget .view-form-icon.double > div.col-xs-6:last-of-type input {
   border-bottom-left-radius: 0px;
   border-top-left-radius: 0px;
+}
+.report-header{
+  cursor:pointer;
+}
+.report-arrows{
+  margin-left: 1px;
+  opacity: .5;
+}
+.order-header{
+  cursor:pointer;
+}
+.order-arrows{
+  margin-left: 5px;
+  opacity: .5;
 }
 .glyphicon {
   display: inline-block;

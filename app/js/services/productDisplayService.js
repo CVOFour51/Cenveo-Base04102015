@@ -183,17 +183,24 @@ four51.app.factory('ProductDisplayService', ['$sce', '$451', 'Variant', 'Product
 			angular.forEach(scope.LineItem.Product.Specs, function(item){
 				if(item.CanSetForLineItem || item.DefinesVariant)
 				{
-					hasAddToOrderSpecs = true;
 					scope.LineItem.Specs[item.Name] = item;// Object.create(item);
 				}
 			});
 		}
 
+		//Variant pagination causes hasAddToOrderSpecs to be false unless this value is set after the above if statement
+		if(Object.keys(scope.LineItem.Specs).length){
+			hasAddToOrderSpecs = true;
+		}
+		
+		//used for checking pageinated variants for price schedules
+		scope.currentFirstVariant = scope.settings ? (scope.settings.currentPage * scope.settings.pageSize) - scope.settings.pageSize : 0;
+
 		scope.allowAddFromVariantList =
-			(scope.LineItem.Product.ShowSpecsWithVariantList || !hasAddToOrderSpecs)
-				&& !scope.LineItem.Variant
-				&& scope.LineItem.Product.Variants && scope.LineItem.Product.Variants.length > 0
-				&& ((scope.LineItem.Product.Variants && scope.LineItem.Product.Variants.length > 0) || scope.LineItem.Product.Type == 'VariableText')
+			((scope.LineItem.Product.Type == 'VariableText' && scope.LineItem.Product.ShowSpecsWithVariantList) || (scope.LineItem.Product.Type == 'Static' && scope.LineItem.Product.ShowSpecsWithVariantList && hasAddToOrderSpecs) || !hasAddToOrderSpecs)
+			&& !scope.LineItem.Variant
+			&& scope.LineItem.Product.Variants && scope.LineItem.Product.Variants.length > 0
+			&& ((scope.LineItem.Product.Variants && scope.LineItem.Product.Variants.length > 0) || scope.LineItem.Product.Type == 'VariableText')
 
 		function determinePriceSchedule() {
 			// default to standard if no order type
@@ -242,7 +249,7 @@ four51.app.factory('ProductDisplayService', ['$sce', '$451', 'Variant', 'Product
 					if (!v) return;
 					scope.variantLineItems[v.InteropID] = {
 						PriceSchedule: (scope.currentOrder ? v[scope.currentOrder.Type + 'PriceSchedule'] : (v.StandardPriceSchedule || v.ReplenishmentPriceSchedule))
-							|| (scope.currentOrder ? p[scope.currentOrder.Type + 'PriceSchedule'] : (v.StandardPriceSchedule || v.ReplenishmentPriceSchedule || scope.LineItem.PriceSchedule)),
+						|| (scope.currentOrder ? p[scope.currentOrder.Type + 'PriceSchedule'] : (v.StandardPriceSchedule || v.ReplenishmentPriceSchedule || scope.LineItem.PriceSchedule)),
 						Product: p,
 						Variant: v,
 						Specs: scope.LineItem.Specs
@@ -253,8 +260,8 @@ four51.app.factory('ProductDisplayService', ['$sce', '$451', 'Variant', 'Product
 
 		function allowAddToOrder() {
 			return (scope.currentOrder ? canAddToOrderType(scope.currentOrder.Type) : true) &&
-				   (scope.allowAddFromVariantList || (scope.LineItem.Variant || (scope.LineItem.Product.VariantCount == 0 && scope.LineItem.Product.Type != 'VariableText'))
-			);
+				(scope.allowAddFromVariantList || (scope.LineItem.Variant || (scope.LineItem.Product.VariantCount == 0 && scope.LineItem.Product.Type != 'VariableText'))
+				);
 		}
 
 		function canAddToOrderType(type) {
@@ -274,11 +281,12 @@ four51.app.factory('ProductDisplayService', ['$sce', '$451', 'Variant', 'Product
 				return scope.LineItem.Product[type + 'PriceSchedule'] != null;
 				//return scope.LineItem.PriceSchedule.OrderType == type && scope.user.Permissions.contains(type + 'Order');
 			}
-
+            
+            //use scope.currentFirstVariant instead of 0
 			return scope.user.Permissions.contains(type + 'Order')
-				&& scope.variantLineItems ? scope.variantLineItems[scope.LineItem.Product.Variants[0].InteropID].Variant[type + 'PriceSchedule'] != null : scope.LineItem.Product[type + 'PriceSchedule'] != null
-				&& (scope.currentOrder && scope.currentOrder.ID ? scope.currentOrder.Type == type : true)
-				&& (scope.currentOrder && scope.currentOrder.ID ? (scope.variantLineItems ? scope.variantLineItems[scope.LineItem.Product.Variants[0].InteropID].PriceSchedule.OrderType : scope.LineItem.PriceSchedule.OrderType) == scope.currentOrder.Type : true);
+			&& scope.variantLineItems ? scope.variantLineItems[scope.LineItem.Product.Variants[scope.currentFirstVariant].InteropID].Variant[type + 'PriceSchedule'] != null : scope.LineItem.Product[type + 'PriceSchedule'] != null
+			&& (scope.currentOrder && scope.currentOrder.ID ? scope.currentOrder.Type == type : true)
+			&& (scope.currentOrder && scope.currentOrder.ID ? (scope.variantLineItems ? scope.variantLineItems[scope.LineItem.Product.Variants[scope.currentFirstVariant].InteropID].PriceSchedule.OrderType : scope.LineItem.PriceSchedule.OrderType) == scope.currentOrder.Type : true);
 		}
 
 		function canCreateVariant() {
@@ -315,15 +323,9 @@ four51.app.factory('ProductDisplayService', ['$sce', '$451', 'Variant', 'Product
 		Product.clearCache().get(productInteropID, function(data){
 			var p = data;
 			if(variantInteropID){
-				if(p.Type == 'VariableText'){
-					Variant.get({VariantInteropID: variantInteropID, ProductInteropID: p.InteropID }, function(v) {
-						callback({product: p, variant: v});
-					});
-				}
-				else{
-					var variant = $451.filter(data.Variants, {Property: 'InteropID', Value: variantInteropID})[0];
-					callback({product: p, variant: variant});
-				}
+				Variant.get({VariantInteropID: variantInteropID, ProductInteropID: p.InteropID }, function(v) {
+					callback({product: p, variant: v});
+				});
 			}
 			else{
 				if (p.Type == 'Static' && p.IsVBOSS) {
