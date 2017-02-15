@@ -1,3 +1,4 @@
+/* */
 four51.app.controller('ApprovalInputCtrl', ['$scope', '$location', '$rootScope', 'Order', 'Address', function ($scope, $location, $rootScope, Order, Address) {
 	$scope.approveOrder = function() {
 		$scope.loadingIndicator = true;
