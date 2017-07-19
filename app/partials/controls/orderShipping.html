@@ -78,7 +78,7 @@
                                 <p ng-show="orderShipAddress.Street1"><small>{{orderShipAddress.Street1}}</small></p>
                                 <p ng-show="orderShipAddress.Street2"><small>{{orderShipAddress.Street2}}</small></p>
                                 <p ng-show="orderShipAddress.City || orderShipAddress.State || order.ShipAddress.Zip">
-                                    <small>{{orderShipAddress.City}}<span ng-if="orderShipAddress.City && currentOrderShipAddress.State">, </span> {{orderShipAddress.State}} {{orderShipAddress.Zip}}</small>
+                                    <small>{{orderShipAddress.City}}<span ng-if="orderShipAddress.City && orderShipAddress.State">, </span> {{orderShipAddress.State}} {{orderShipAddress.Zip}}</small>
                                 </p>
                                 <p ng-show="orderShipAddress.Phone"><small>{{orderShipAddress.Phone}}</small></p>
                             </div>
